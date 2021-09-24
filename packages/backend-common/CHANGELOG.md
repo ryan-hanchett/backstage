@@ -1,5 +1,13 @@
 # @backstage/backend-common
 
+## 0.9.5
+
+### Patch Changes
+
+- 0c8a59e293: Fix an issue where filtering in search doesn't work correctly for Bitbucket.
+- Updated dependencies
+  - @backstage/integration@0.6.6
+
 ## 0.9.4
 
 ### Patch Changes
