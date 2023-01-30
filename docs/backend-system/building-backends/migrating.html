@@ -194,11 +194,11 @@ typically found in your <code>packages/app</code> folder. By default it's just p
 <p>A basic installation of the catalog plugin looks as follows.</p>
 <pre><code class="hljs css language-diff"> // packages/backend/src/index.ts
 <span class="hljs-addition">+import { catalogPlugin } from '@backstage/plugin-catalog-backend';</span>
-<span class="hljs-addition">+import { scaffolderCatalogModule } from '@backstage/plugin-scaffolder-backend';</span>
+<span class="hljs-addition">+import { catalogModuleTemplateKind } from '@backstage/plugin-scaffolder-backend';</span>
 
  const backend = createBackend();
 <span class="hljs-addition">+backend.add(catalogPlugin());</span>
-<span class="hljs-addition">+backend.add(scaffolderCatalogModule());</span>
+<span class="hljs-addition">+backend.add(catalogModuleTemplateKind());</span>
 </code></pre>
 <p>Note that this also installs a module from the scaffolder, namely the one which
 enables the use of the <code>Template</code> kind. In the unlikely event that you do not
@@ -214,9 +214,9 @@ depends on the appropriate extension point and interacts with it.</p>
 <span class="hljs-addition">+import { catalogProcessingExtensionPoint } from '@backstage/plugin-catalog-node';</span>
 <span class="hljs-addition">+import { createBackendModule } from '@backstage/backend-plugin-api';</span>
 
-<span class="hljs-addition">+const catalogExtensionsModule = createBackendModule({</span>
-<span class="hljs-addition">+  pluginId: 'catalog',    // name of the plugin that the module is targeting</span>
-<span class="hljs-addition">+  moduleId: 'extensions', // you can choose this one freely</span>
+<span class="hljs-addition">+const catalogModuleCustomExtensions = createBackendModule({</span>
+<span class="hljs-addition">+  pluginId: 'catalog',  // name of the plugin that the module is targeting</span>
+<span class="hljs-addition">+  moduleId: 'customExtensions',</span>
 <span class="hljs-addition">+  register(env) {</span>
 <span class="hljs-addition">+    env.registerInit({</span>
 <span class="hljs-addition">+      deps: {</span>
@@ -235,8 +235,8 @@ depends on the appropriate extension point and interacts with it.</p>
 
  const backend = createBackend();
  backend.add(catalogPlugin());
- backend.add(scaffolderCatalogModule());
-<span class="hljs-addition">+backend.add(catalogExtensionsModule());</span>
+ backend.add(catalogModuleTemplateKind());
+<span class="hljs-addition">+backend.add(catalogModuleCustomExtensions());</span>
 </code></pre>
 <p>This also requires that you have a dependency on the corresponding node package,
 if you didn't already have one.</p>
@@ -267,9 +267,9 @@ depends on the appropriate extension point and interacts with it.</p>
 <span class="hljs-addition">+import { eventsExtensionPoint } from '@backstage/plugin-events-node';</span>
 <span class="hljs-addition">+import { createBackendModule } from '@backstage/backend-plugin-api';</span>
 
-<span class="hljs-addition">+const eventsExtensionsModule = createBackendModule({</span>
-<span class="hljs-addition">+  pluginId: 'events',     // name of the plugin that the module is targeting</span>
-<span class="hljs-addition">+  moduleId: 'extensions', // you can choose this one freely</span>
+<span class="hljs-addition">+const eventsModuleCustomExtensions = createBackendModule({</span>
+<span class="hljs-addition">+  pluginId: 'events',  // name of the plugin that the module is targeting</span>
+<span class="hljs-addition">+  moduleId: 'customExtensions',</span>
 <span class="hljs-addition">+  register(env) {</span>
 <span class="hljs-addition">+    env.registerInit({</span>
 <span class="hljs-addition">+      deps: {</span>
@@ -287,7 +287,7 @@ depends on the appropriate extension point and interacts with it.</p>
 
  const backend = createBackend();
  backend.add(eventsPlugin());
-<span class="hljs-addition">+backend.add(eventsExtensionsModule());</span>
+<span class="hljs-addition">+backend.add(eventsModuleCustomExtensions());</span>
 </code></pre>
 <p>This also requires that you have a dependency on the corresponding node package,
 if you didn't already have one.</p>
@@ -318,9 +318,9 @@ depends on the appropriate extension point and interacts with it.</p>
 <span class="hljs-addition">+import { scaffolderActionsExtensionPoint } from '@backstage/plugin-scaffolder-node';</span>
 <span class="hljs-addition">+import { createBackendModule } from '@backstage/backend-plugin-api';</span>
 
-<span class="hljs-addition">+const scaffolderExtensionsModule = createBackendModule({</span>
-<span class="hljs-addition">+  pluginId: 'scaffolder', // name of the plugin that the module is targeting</span>
-<span class="hljs-addition">+  moduleId: 'extensions', // you can choose this one freely</span>
+<span class="hljs-addition">+const scaffolderModuleCustomExtensions = createBackendModule({</span>
+<span class="hljs-addition">+  pluginId: 'scaffolder',  // name of the plugin that the module is targeting</span>
+<span class="hljs-addition">+  moduleId: 'customExtensions',</span>
 <span class="hljs-addition">+  register(env) {</span>
 <span class="hljs-addition">+    env.registerInit({</span>
 <span class="hljs-addition">+      deps: {</span>
@@ -338,7 +338,7 @@ depends on the appropriate extension point and interacts with it.</p>
 
  const backend = createBackend();
  backend.add(scaffolderPlugin());
-<span class="hljs-addition">+backend.add(scaffolderExtensionsModule());</span>
+<span class="hljs-addition">+backend.add(scaffolderModuleCustomExtensions());</span>
 </code></pre>
 <p>This also requires that you have a dependency on the corresponding node package,
 if you didn't already have one.</p>
@@ -350,7 +350,7 @@ going easily, but feel free to move it out to where it fits best. As you migrate
 your entire plugin flora to the new backend system, you will probably make more
 and more of these modules as &quot;first class&quot; things, living right next to the
 implementations that they represent, and being exported from there.</p>
-</span></div></article></div><div class="docLastUpdate"><em>Last updated on 1/23/2023</em></div><div class="docs-prevnext"></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#overview">Overview</a></li><li><a href="#overall-structure">Overall Structure</a></li><li><a href="#migrating-the-index-file">Migrating the Index File</a></li><li><a href="#handling-custom-environments">Handling Custom Environments</a></li><li><a href="#cleaning-up-the-plugins-folder">Cleaning Up the Plugins Folder</a><ul class="toc-headings"><li><a href="#the-app-plugin">The App Plugin</a></li><li><a href="#the-catalog-plugin">The Catalog Plugin</a></li><li><a href="#the-events-plugin">The Events Plugin</a></li><li><a href="#the-scaffolder-plugin">The Scaffolder Plugin</a></li></ul></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><div class="footer-title"><a href="/"><h2 class="footerLogo"></h2></a></div><div><h5>Docs</h5><a href="/docs/overview/what-is-backstage">What is Backstage?</a><a href="/docs/getting-started/">Getting started</a><a href="/docs/features/software-catalog/software-catalog-overview">Software Catalog</a><a href="/docs/plugins/create-a-plugin">Create a Plugin</a><a href="/docs/dls/design">Designing for Backstage</a></div><div><h5>Community</h5><a href="https://discord.gg/MUpMjP2">Support chatroom</a><a href="https://github.com/backstage/backstage/blob/master/CONTRIBUTING.md">Contributing</a><a href="https://backstage.spotify.com">Adopting</a><a href="https://github.com/backstage/community">Community Sessions</a><a href="https://info.backstage.spotify.com/newsletter_subscribe">Subscribe to our newsletter</a><a href="https://www.cncf.io/projects/">CNCF Incubation</a></div><div><h5>More</h5><a href="https://spotify.github.io/">Open Source @ Spotify</a><a href="https://engineering.atspotify.com/">Spotify Engineering Blog</a><a href="https://developer.spotify.com/">Spotify for Developers</a><a href="https://github.com/backstage/backstage">GitHub</a><a class="github-button" href="https://github.com/backstage/backstage" data-icon="octicon-star" data-count-href="/backstage/backstage/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">Star</a><div class="social"><a href="https://twitter.com/SpotifyEng" class="twitter-follow-button">Follow @SpotifyEng</a></div></div></section><p style="text-align:center"><a href="https://spotify.github.io">Made with ❤️ at Spotify</a></p><p class="copyright">Copyright © 2023 Backstage Project Authors. All rights reserved. The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our Trademark Usage page: https://www.linuxfoundation.org/trademark-usage</p></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>window.twttr=(function(d,s, id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return t;js=d.createElement(s);js.id=id;js.src='https://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js, fjs);t._e = [];t.ready = function(f) {t._e.push(f);};return t;}(document, 'script', 'twitter-wjs'));</script><script>
+</span></div></article></div><div class="docLastUpdate"><em>Last updated on 1/30/2023</em></div><div class="docs-prevnext"></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#overview">Overview</a></li><li><a href="#overall-structure">Overall Structure</a></li><li><a href="#migrating-the-index-file">Migrating the Index File</a></li><li><a href="#handling-custom-environments">Handling Custom Environments</a></li><li><a href="#cleaning-up-the-plugins-folder">Cleaning Up the Plugins Folder</a><ul class="toc-headings"><li><a href="#the-app-plugin">The App Plugin</a></li><li><a href="#the-catalog-plugin">The Catalog Plugin</a></li><li><a href="#the-events-plugin">The Events Plugin</a></li><li><a href="#the-scaffolder-plugin">The Scaffolder Plugin</a></li></ul></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><div class="footer-title"><a href="/"><h2 class="footerLogo"></h2></a></div><div><h5>Docs</h5><a href="/docs/overview/what-is-backstage">What is Backstage?</a><a href="/docs/getting-started/">Getting started</a><a href="/docs/features/software-catalog/software-catalog-overview">Software Catalog</a><a href="/docs/plugins/create-a-plugin">Create a Plugin</a><a href="/docs/dls/design">Designing for Backstage</a></div><div><h5>Community</h5><a href="https://discord.gg/MUpMjP2">Support chatroom</a><a href="https://github.com/backstage/backstage/blob/master/CONTRIBUTING.md">Contributing</a><a href="https://backstage.spotify.com">Adopting</a><a href="https://github.com/backstage/community">Community Sessions</a><a href="https://info.backstage.spotify.com/newsletter_subscribe">Subscribe to our newsletter</a><a href="https://www.cncf.io/projects/">CNCF Incubation</a></div><div><h5>More</h5><a href="https://spotify.github.io/">Open Source @ Spotify</a><a href="https://engineering.atspotify.com/">Spotify Engineering Blog</a><a href="https://developer.spotify.com/">Spotify for Developers</a><a href="https://github.com/backstage/backstage">GitHub</a><a class="github-button" href="https://github.com/backstage/backstage" data-icon="octicon-star" data-count-href="/backstage/backstage/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">Star</a><div class="social"><a href="https://twitter.com/SpotifyEng" class="twitter-follow-button">Follow @SpotifyEng</a></div></div></section><p style="text-align:center"><a href="https://spotify.github.io">Made with ❤️ at Spotify</a></p><p class="copyright">Copyright © 2023 Backstage Project Authors. All rights reserved. The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our Trademark Usage page: https://www.linuxfoundation.org/trademark-usage</p></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>window.twttr=(function(d,s, id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return t;js=d.createElement(s);js.id=id;js.src='https://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js, fjs);t._e = [];t.ready = function(f) {t._e.push(f);};return t;}(document, 'script', 'twitter-wjs'));</script><script>
                 document.addEventListener('keyup', function(e) {
                   if (e.target !== document.body) {
                     return;
